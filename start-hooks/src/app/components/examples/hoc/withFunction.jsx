@@ -1,33 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const withFunction = (Component) => () => {
-    const login = localStorage.getItem("auth");
-    const isLogin = JSON.parse(login);
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        const login = localStorage.getItem("auth");
+        const isLogin = JSON.parse(login);
+        console.log(isLogin);
+        setUser(isLogin);
+    }, []);
 
     const onLogOut = () => {
-        localStorage.setItem(
-            "auth",
-            JSON.stringify({ token: "token", isAuth: false })
-        );
-        // const newPerson = localStorage.getItem("auth");
-        // const parseNewPerson = JSON.parse(newPerson);
-        // parseNewPerson.isAuth = false;
-        // localStorage.setItem("auth", JSON.stringify(parseNewPerson));
+        setUser(() => ({
+            token: "",
+            isAuth: false
+        }));
+        localStorage.setItem("auth", JSON.stringify(user));
     };
     const onLogin = () => {
-        console.log(isLogin);
-        localStorage.setItem(
-            "auth",
-            JSON.stringify({ token: "token", isAuth: true })
-        );
-        console.log("onLogin");
+        setUser(() => ({
+            token: "token",
+            isAuth: true
+        }));
+        localStorage.setItem("auth", JSON.stringify(user));
     };
     return (
-        <Component
-            isAuth={isLogin.isAuth}
-            onLogOut={onLogOut}
-            onLogin={onLogin}
-        />
+        <Component isAuth={user.isAuth} onLogOut={onLogOut} onLogin={onLogin} />
     );
 };
 
